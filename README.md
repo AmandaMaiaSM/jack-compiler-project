@@ -19,9 +19,6 @@ O objetivo do projeto é traduzir programas escritos em Jack para a linguagem da
 
 A linguagem escolhida para o desenvolvimento do compilador é:
 
-JavaScript (Node.js)
-
-*(Você pode alterar aqui caso escolha outra, como Java, Python ou C++)*
 
 ---
 
@@ -41,6 +38,6 @@ Projeto iniciado – Configuração do ambiente e definição da equipe.
 
 ---
 
-## 📎 Observações
+## Observações
 
 Este projeto será desenvolvido sem o uso de ferramentas automáticas como Lex, Flex ou Yacc, com foco na implementação manual dos conceitos de compiladores.
