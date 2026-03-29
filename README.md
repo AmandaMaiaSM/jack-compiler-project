@@ -17,7 +17,7 @@ O objetivo do projeto é traduzir programas escritos em Jack para a linguagem da
 
 ## Linguagem Utilizada
 
-A linguagem escolhida para o desenvolvimento do compilador é:
+A linguagem escolhida para o desenvolvimento do compilador é: Java e/ou Python
 
 
 ---
