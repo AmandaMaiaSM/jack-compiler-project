@@ -7,6 +7,8 @@ scanner = Scanner()
 tokens = scanner.extrair_tokens_brutos(codigo)
 tokens_sem_comentarios = scanner.remover_comentarios(tokens)
 
+scanner.validar_blocos(tokens_sem_comentarios)
+
 
 # print("Tokens sem comentarios:")
 # print(tokens_sem_comentarios)

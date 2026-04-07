@@ -146,5 +146,55 @@ class Scanner:
 
             i += 1
 
+
+    def validar_blocos(self, tokens=None):
+
+        if tokens is None:
+            tokens = []
+
+        abertura_para_fechamento = {
+            "{": "}",
+            "(": ")",
+            "[": "]",
+            '"': '"'
+        }
+        fechamentos = set(abertura_para_fechamento.values())
+        pilha = []
+
+        for token in tokens:
+            if token == "\n":
+                continue
+
+            if token == '"':
+                if pilha and pilha[-1] == '"':
+                    pilha.pop()
+                else:
+                    pilha.append('"')
+                continue
+
+            if pilha and pilha[-1] == '"':
+                continue
+
+            if token in abertura_para_fechamento:
+                pilha.append(token)
+                continue
+
+            if token in fechamentos:
+                if not pilha:
+                    raise ValueError(f"Erro: fechamento inesperado {token}")
+
+                topo = pilha[-1]
+                esperado = abertura_para_fechamento.get(topo)
+                if token == esperado:
+                    pilha.pop()
+                else:
+                    raise ValueError(f"Erro: esperado {esperado} mas encontrou {token}")
+
+        if pilha:
+            aberto = pilha[-1]
+            esperado = abertura_para_fechamento.get(aberto)
+            if aberto == '"':
+                raise ValueError('Erro: string nao fechada com "')
+            raise ValueError(f"Erro: bloco nao fechado, esperado {esperado}")
         
     
