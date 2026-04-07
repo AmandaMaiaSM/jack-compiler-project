@@ -9,9 +9,8 @@ tokens_sem_comentarios = scanner.remover_comentarios(tokens)
 
 scanner.validar_blocos(tokens_sem_comentarios)
 
+tokens_classificados = scanner.classificar_tokens(tokens_sem_comentarios)
 
-# print("Tokens sem comentarios:")
-# print(tokens_sem_comentarios)
-
-scanner.classificar_tokens(tokens_sem_comentarios)
+for token in tokens_classificados:
+    print(token.type, token.value)
 

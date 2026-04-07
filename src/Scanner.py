@@ -1,5 +1,8 @@
 
 
+from src.Token import Token
+
+
 class Scanner:
 
     def __init__(self):
@@ -118,6 +121,7 @@ class Scanner:
             tokens = []
 
         quantidade_tokens = len(tokens)
+        tokens_classificados = []
         
         i = 0
         while i < quantidade_tokens:
@@ -126,25 +130,27 @@ class Scanner:
                 continue
 
             if tokens[i] == '"':
-                print('" = symbol')
+                tokens_classificados.append(Token("symbol", '"'))
                 if i + 1 < quantidade_tokens:
                     string_val = tokens[i + 1]
-                    print(f"{string_val} = stringConstant")
+                    tokens_classificados.append(Token("stringConstant", string_val))
                     i += 1
                 if i + 1 < quantidade_tokens and tokens[i + 1] == '"':
-                    print('" = symbol')
+                    tokens_classificados.append(Token("symbol", '"'))
                     i += 1
                 i += 1
                 continue
         
-            if(tokens[i].upper() in self.keywords):
-                print(f"{tokens[i]} = keyword")
-            elif (tokens[i].upper() in self.symbols):
-                print(f"{tokens[i]} = symbol")
+            if tokens[i].upper() in self.keywords:
+                tokens_classificados.append(Token("keyword", tokens[i]))
+            elif tokens[i].upper() in self.symbols:
+                tokens_classificados.append(Token("symbol", tokens[i]))
             else:
-                print(f"{tokens[i]} = identifier")
+                tokens_classificados.append(Token("identifier", tokens[i]))
 
             i += 1
+
+        return tokens_classificados
 
 
     def validar_blocos(self, tokens=None):
