@@ -3,15 +3,16 @@
 class Scanner:
 
     def scan(self, codigo):
+        return self.extrair_tokens_brutos(codigo)
+
+    def extrair_tokens_brutos(self, codigo):
         tamanho_codigo = len(codigo)
 
         tokens = []
 
-        count = 0
-
         token = ""
 
-        symbols = ["{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "&", "|", "<", ">", "=", "~"]
+        symbols = ["{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&", "|", "<", ">", "=", "~"]
 
         i = 0
         while i < tamanho_codigo:
@@ -31,30 +32,6 @@ class Scanner:
                 i += 1
                 continue
 
-            # Trata comentarios ANTES do restante
-            if codigo[i] == '/' and i + 1 < tamanho_codigo:
-                if codigo[i+1] == '/':
-                    # Comentario de linha - ignora ate o fim da linha
-                    if token != "":
-                        tokens.append(token)
-                        token = ""
-                    i += 2
-                    while i < tamanho_codigo and codigo[i] != '\n':
-                        i += 1
-                    continue
-                elif codigo[i+1] == '*':
-                    # Comentario de bloco - ignora ate */
-                    if token != "":
-                        tokens.append(token)
-                        token = ""
-                    i += 2
-                    while i < tamanho_codigo - 1:
-                        if codigo[i] == '*' and codigo[i+1] == '/':
-                            i += 2
-                            break
-                        i += 1
-                    continue
-
             # Trata espacos em branco
             if codigo[i] in {" ", "\n", "\t", "\r"}:
                 token = token.strip()
@@ -67,7 +44,7 @@ class Scanner:
 
                 token = ""
 
-            # Trata simbolos (/ foi removido da lista)
+            # Trata simbolos (incluindo /)
             elif codigo[i] in symbols:
                 if token != "":
                     tokens.append(token)
@@ -75,21 +52,53 @@ class Scanner:
 
                 # Mantem simbolos como estao, sem conversao para XML
                 tokens.append(codigo[i])
-                
-            # / sozinho (nao e comentario)
-            elif codigo[i] == '/':
-                if token != "":
-                    tokens.append(token)
-                    token = ""
-                tokens.append('/')
 
             else:
                 token = token + codigo[i]
-            
-            count += 1
+
             i += 1
 
         if token != "":
             tokens.append(token)
 
         return tokens
+
+    def remover_comentarios(self, tokens):
+        tokens_sem_comentarios = []
+        i = 0
+        em_comentario_bloco = False
+        em_comentario_linha = False
+
+        while i < len(tokens):
+            token_atual = tokens[i]
+
+            if em_comentario_bloco:
+                if token_atual == '*' and i + 1 < len(tokens) and tokens[i + 1] == '/':
+                    em_comentario_bloco = False
+                    i += 2
+                    continue
+                i += 1
+                continue
+
+            if em_comentario_linha:
+                if token_atual == "\n":
+                    em_comentario_linha = False
+                    tokens_sem_comentarios.append(token_atual)
+                i += 1
+                continue
+
+            if token_atual == '/' and i + 1 < len(tokens):
+                proximo = tokens[i + 1]
+                if proximo == '/':
+                    em_comentario_linha = True
+                    i += 2
+                    continue
+                if proximo == '*':
+                    em_comentario_bloco = True
+                    i += 2
+                    continue
+
+            tokens_sem_comentarios.append(token_atual)
+            i += 1
+
+        return tokens_sem_comentarios
