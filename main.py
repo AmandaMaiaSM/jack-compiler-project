@@ -8,11 +8,8 @@ tokens = scanner.extrair_tokens_brutos(codigo)
 tokens_sem_comentarios = scanner.remover_comentarios(tokens)
 
 
+# print("Tokens sem comentarios:")
+# print(tokens_sem_comentarios)
 
-print("Tokens brutos:"  )
-print(tokens)
+scanner.classificar_tokens(tokens_sem_comentarios)
 
-print("\n\n")
-
-print("Tokens sem comentarios:")
-print(tokens_sem_comentarios)

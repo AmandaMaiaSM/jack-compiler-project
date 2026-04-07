@@ -2,6 +2,14 @@
 
 class Scanner:
 
+    def __init__(self):
+        self.symbols = ["{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&", "|", "<", ">", "=", "~"]
+        self.keywords = ["CLASS", "CONSTRUCTOR", "FUNCTION", "METHOD", "FIELD", 
+            "STATIC", "VAR", "INT", "CHAR", "BOOLEAN", "VOID", 
+            "TRUE", "FALSE", "NULL", "THIS", "LET", "DO", 
+            "IF", "ELSE", "WHILE", "RETURN"
+            ]
+        
     def scan(self, codigo):
         return self.extrair_tokens_brutos(codigo)
 
@@ -11,8 +19,6 @@ class Scanner:
         tokens = []
 
         token = ""
-
-        symbols = ["{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&", "|", "<", ">", "=", "~"]
 
         i = 0
         while i < tamanho_codigo:
@@ -28,8 +34,11 @@ class Scanner:
                     string_val += codigo[i]
                     i += 1
 
+                tokens.append('"')
                 tokens.append(string_val)
-                i += 1
+                if i < tamanho_codigo and codigo[i] == '"':
+                    tokens.append('"')
+                    i += 1
                 continue
 
             # Trata espacos em branco
@@ -45,7 +54,7 @@ class Scanner:
                 token = ""
 
             # Trata simbolos (incluindo /)
-            elif codigo[i] in symbols:
+            elif codigo[i] in self.symbols:
                 if token != "":
                     tokens.append(token)
                     token = ""
@@ -102,3 +111,40 @@ class Scanner:
             i += 1
 
         return tokens_sem_comentarios
+    
+    def classificar_tokens(self, tokens=None):
+
+        if tokens is None:
+            tokens = []
+
+        quantidade_tokens = len(tokens)
+        
+        i = 0
+        while i < quantidade_tokens:
+            if tokens[i] == "\n":
+                i += 1
+                continue
+
+            if tokens[i] == '"':
+                print('" = symbol')
+                if i + 1 < quantidade_tokens:
+                    string_val = tokens[i + 1]
+                    print(f"{string_val} = stringConstant")
+                    i += 1
+                if i + 1 < quantidade_tokens and tokens[i + 1] == '"':
+                    print('" = symbol')
+                    i += 1
+                i += 1
+                continue
+        
+            if(tokens[i].upper() in self.keywords):
+                print(f"{tokens[i]} = keyword")
+            elif (tokens[i].upper() in self.symbols):
+                print(f"{tokens[i]} = symbol")
+            else:
+                print(f"{tokens[i]} = identifier")
+
+            i += 1
+
+        
+    
