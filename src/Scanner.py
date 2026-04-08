@@ -130,13 +130,11 @@ class Scanner:
                 continue
 
             if tokens[i] == '"':
-                tokens_classificados.append(Token("symbol", '"'))
                 if i + 1 < quantidade_tokens:
                     string_val = tokens[i + 1]
                     tokens_classificados.append(Token("stringConstant", string_val))
                     i += 1
                 if i + 1 < quantidade_tokens and tokens[i + 1] == '"':
-                    tokens_classificados.append(Token("symbol", '"'))
                     i += 1
                 i += 1
                 continue
@@ -145,6 +143,8 @@ class Scanner:
                 tokens_classificados.append(Token("keyword", tokens[i]))
             elif tokens[i].upper() in self.symbols:
                 tokens_classificados.append(Token("symbol", tokens[i]))
+            elif tokens[i].isdigit():
+                tokens_classificados.append(Token("integerConstant", tokens[i]))
             else:
                 tokens_classificados.append(Token("identifier", tokens[i]))
 
