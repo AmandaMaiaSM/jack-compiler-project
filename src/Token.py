@@ -1,9 +1,11 @@
 
 class Token:
-    def __init__(self, type, value):
+    def __init__(self, type, value, line=None):
         self.type = type
         self.value = value
-        self.line = int
+        self.line = line
 
     def __str__(self):
-        return f"Token({self.type}, {self.value})"
+        if self.line is None:
+            return f"Token({self.type}, {self.value})"
+        return f"Token({self.type}, {self.value}, line={self.line})"

@@ -1,43 +1,41 @@
 # jack-compiler-project
 ### Jack Compiler
 
-##  Descrição
-Este repositório contém o desenvolvimento de um compilador para a linguagem Jack, como parte da disciplina de Construção de Compiladores.
+## Descricao
+Este projeto implementa um compilador para a linguagem Jack (Nand2Tetris), com foco inicial na etapa de analise lexica. O tokenizer le arquivos `.jack`, remove comentarios, valida delimitadores e gera tokens que podem ser exportados em XML.
 
-O objetivo do projeto é traduzir programas escritos em Jack para a linguagem da Máquina Virtual (VM), aplicando conceitos fundamentais de análise léxica, sintática e geração de código.
-
----
-
-##  Integrantes
-
+## Integrantes
 - Amanda Maia Soares Silva
 - Marcos Antonio Branco Pereira Junior
 
----
+## Linguagem utilizada
+Python
 
-## Linguagem Utilizada
+## Etapas do projeto
+1. Analisador Lexico (Tokenizer)
+2. Analisador Sintatico (Parser)
+3. Geracao de Codigo (VM)
 
-A linguagem escolhida para o desenvolvimento do compilador é: Java e/ou Python
+## Como rodar
+1. Escolha o arquivo de entrada em `main.py` (ex.: `tests\inputs\Main.jack`).
+2. Execute:
 
+```bash
+python main.py
+```
 
----
+O XML de tokens e salvo em `output/` com o sufixo `T.xml`.
 
-##  Etapas do Projeto
+## Descricao dos arquivos
+- `main.py`: ponto de entrada que executa o tokenizer e imprime o XML.
+- `src/JackTokenizer.py`: orquestra leitura, tokenizacao, validacao e escrita do XML.
+- `src/Scanner.py`: implementa a analise lexica (tokenizacao, remocao de comentarios e validacao de blocos).
+- `src/Token.py`: classe `Token` para representar tipo, valor e linha.
+- `src/WriterXML.py`: converte tokens em XML e grava em arquivo.
+- `src/utils.py`: utilitarios de leitura de arquivo.
+- `tests/inputs/`: programas Jack de entrada para teste.
+- `tests/expected/`: saidas XML esperadas para comparacao.
+- `output/`: saidas geradas pelo tokenizer.
 
-O projeto será desenvolvido em etapas:
-
-1. Analisador Léxico (Tokenizer)
-2. Analisador Sintático (Parser)
-3. Geração de Código (VM)
-
----
-
-## Status
-
-Projeto iniciado – Configuração do ambiente e definição da equipe.
-
----
-
-## Observações
-
-Este projeto será desenvolvido sem o uso de ferramentas automáticas como Lex, Flex ou Yacc, com foco na implementação manual dos conceitos de compiladores.
+## Observacoes
+O projeto nao usa ferramentas automaticas como Lex, Flex ou Yacc, priorizando a implementacao manual dos conceitos de compiladores.

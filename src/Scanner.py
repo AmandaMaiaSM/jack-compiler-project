@@ -89,6 +89,8 @@ class Scanner:
                     em_comentario_bloco = False
                     i += 2
                     continue
+                if token_atual == "\n":
+                    tokens_sem_comentarios.append(token_atual)
                 i += 1
                 continue
 
@@ -124,15 +126,17 @@ class Scanner:
         tokens_classificados = []
         
         i = 0
+        linha = 1
         while i < quantidade_tokens:
             if tokens[i] == "\n":
+                linha += 1
                 i += 1
                 continue
 
             if tokens[i] == '"':
                 if i + 1 < quantidade_tokens:
                     string_val = tokens[i + 1]
-                    tokens_classificados.append(Token("stringConstant", string_val))
+                    tokens_classificados.append(Token("stringConstant", string_val, linha))
                     i += 1
                 if i + 1 < quantidade_tokens and tokens[i + 1] == '"':
                     i += 1
@@ -140,13 +144,13 @@ class Scanner:
                 continue
         
             if tokens[i].upper() in self.keywords:
-                tokens_classificados.append(Token("keyword", tokens[i]))
+                tokens_classificados.append(Token("keyword", tokens[i], linha))
             elif tokens[i].upper() in self.symbols:
-                tokens_classificados.append(Token("symbol", tokens[i]))
+                tokens_classificados.append(Token("symbol", tokens[i], linha))
             elif tokens[i].isdigit():
-                tokens_classificados.append(Token("integerConstant", tokens[i]))
+                tokens_classificados.append(Token("integerConstant", tokens[i], linha))
             else:
-                tokens_classificados.append(Token("identifier", tokens[i]))
+                tokens_classificados.append(Token("identifier", tokens[i], linha))
 
             i += 1
 
@@ -166,7 +170,6 @@ class Scanner:
         }
         fechamentos = set(abertura_para_fechamento.values())
         pilha = []
-
         for token in tokens:
             if token == "\n":
                 continue
