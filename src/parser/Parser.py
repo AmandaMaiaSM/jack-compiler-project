@@ -106,9 +106,7 @@ class Parser:
     def parse_statements(self):
         while self.match("keyword", ["let", "if", "while", "do", "return"]):
             if self.match("keyword", "let"):
-                # implementar parse_let()
-                # self.parse_let()
-                raise NotImplementedError("parse_let ainda nao implementado")
+                self.parse_let()
             if self.match("keyword", "if"):
                 # implementar parse_if()
                 # self.parse_if()
@@ -122,10 +120,9 @@ class Parser:
                 # self.parse_do()
                 raise NotImplementedError("parse_do ainda nao implementado")
             if self.match("keyword", "return"):
-                # implementar parse_return()
-                # self.parse_return()
-                raise NotImplementedError("parse_return ainda nao implementado")
+                self.parse_return()
 
+    
     def parse_var_decl(self):
         self.consume("keyword", "var")
         self.consume("keyword", ["int", "char", "boolean"] + list(self.classes))
@@ -134,3 +131,63 @@ class Parser:
             self.consume("symbol", ",")
             self.consume("identifier")
         self.consume("symbol", ";")
+        
+    def parse_let(self):
+        self.consume("keyword", "let")
+        self.consume("identifier")
+        if self.match("symbol", "["):
+            self.consume("symbol", "[")
+            self.parse_expression()
+            self.consume("symbol", "]")
+        self.consume("symbol", "=")
+        self.parse_expression()
+        self.consume("symbol", ";")
+
+    def parse_return(self):
+        self.consume("keyword", "return")
+        if not self.match("symbol", ";"):
+            self.parse_expression()
+        self.consume("symbol", ";")
+
+    def parse_expression(self):
+        self.parse_term()
+        while self.match("symbol", ["+", "-", "*", "/", "&", "|", "<", ">", "="]):
+            self.consume("symbol")
+            self.parse_term()
+
+    def parse_term(self):
+        if self.match("integerConstant"):
+            self.consume("integerConstant")
+            return
+        if self.match("stringConstant"):
+            self.consume("stringConstant")
+            return
+        if self.match("keyword", ["true", "false", "null", "this"]):
+            self.consume("keyword", ["true", "false", "null", "this"])
+            return
+        if self.match("symbol", "("):
+            self.consume("symbol", "(")
+            self.parse_expression()
+            self.consume("symbol", ")")
+            return
+        if self.match("symbol", ["-", "~"]):
+            self.consume("symbol", ["-", "~"])
+            self.parse_term()
+            return
+        if self.match("identifier"):
+            next_token = self.tokens[self.position + 1] if self.position + 1 < len(self.tokens) else None
+            if next_token and next_token.type == "symbol" and next_token.value == "[":
+                self.consume("identifier")
+                self.consume("symbol", "[")
+                self.parse_expression()
+                self.consume("symbol", "]")
+                return
+            if next_token and next_token.type == "symbol" and next_token.value in ("(", "."):
+                # TODO: implementar parse_subroutine_call()
+                # self.parse_subroutine_call()
+                raise NotImplementedError("parse_subroutine_call ainda nao implementado")
+            self.consume("identifier")
+            return
+        token_atual = self.peek()
+        linha = token_atual.line if token_atual else "EOF"
+        raise ValueError(f"Termo inesperado na linha {linha}")
