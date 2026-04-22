@@ -1,10 +1,10 @@
-import sys
-from src.JackTokenizer import JackTokenizer
-
+from src.scanner.Scanner import Scanner
 
 entrada = r"tests\inputs\Main.jack"
 
-compiler = JackTokenizer(entrada)
-xml_output = compiler.tokenizar()
+scanner = Scanner(entrada)
+
+xml_output = scanner.tokenizar()
+
 
 print(xml_output)

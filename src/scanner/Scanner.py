@@ -1,27 +1,27 @@
 import os
-from src.utils import read_file
-from src.Scanner import Scanner
-from src.WriterXML import WriterXML
+from src.scanner.utils import read_file
+from src.scanner.Tokenizer import Tokenizer
+from src.scanner.WriterXML import WriterXML
 
 
-class JackTokenizer:
+class Scanner:
 
     def __init__(self, arquivo_entrada):
         self.arquivo_entrada = arquivo_entrada
-        self.scanner = Scanner()
+        self.tokenizer = Tokenizer()
         self.writer_xml = WriterXML()
         self.tokens_classificados = []
 
     def tokenizar(self, caminho_saida=None):
         codigo = read_file(self.arquivo_entrada)
 
-        tokens = self.scanner.extrair_tokens_brutos(codigo)
+        tokens = self.tokenizer.extrair_tokens_brutos(codigo)
 
-        tokens_sem_comentarios = self.scanner.remover_comentarios(tokens)
+        tokens_sem_comentarios = self.tokenizer.remover_comentarios(tokens)
 
-        self.scanner.validar_blocos(tokens_sem_comentarios)
+        self.tokenizer.validar_blocos(tokens_sem_comentarios)
 
-        self.tokens_classificados = self.scanner.classificar_tokens(
+        self.tokens_classificados = self.tokenizer.classificar_tokens(
             tokens_sem_comentarios
         )
 

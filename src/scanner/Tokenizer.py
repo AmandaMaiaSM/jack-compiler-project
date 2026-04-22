@@ -1,9 +1,9 @@
 
 
-from src.Token import Token
+from src.scanner.Token import Token
 
 
-class Scanner:
+class Tokenizer:
 
     def __init__(self):
         self.symbols = ["{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&", "|", "<", ">", "=", "~"]
