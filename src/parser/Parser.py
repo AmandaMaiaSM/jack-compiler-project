@@ -100,8 +100,31 @@ class Parser:
         self.consume("symbol", "{")
         while self.match("keyword", "var"):
             self.parse_var_decl()
-        # implementar parse_statements()
+        self.parse_statements()
         self.consume("symbol", "}")
+
+    def parse_statements(self):
+        while self.match("keyword", ["let", "if", "while", "do", "return"]):
+            if self.match("keyword", "let"):
+                # implementar parse_let()
+                # self.parse_let()
+                raise NotImplementedError("parse_let ainda nao implementado")
+            if self.match("keyword", "if"):
+                # implementar parse_if()
+                # self.parse_if()
+                raise NotImplementedError("parse_if ainda nao implementado")
+            if self.match("keyword", "while"):
+                # implementar parse_while()
+                # self.parse_while()
+                raise NotImplementedError("parse_while ainda nao implementado")
+            if self.match("keyword", "do"):
+                # implementar parse_do()
+                # self.parse_do()
+                raise NotImplementedError("parse_do ainda nao implementado")
+            if self.match("keyword", "return"):
+                # implementar parse_return()
+                # self.parse_return()
+                raise NotImplementedError("parse_return ainda nao implementado")
 
     def parse_var_decl(self):
         self.consume("keyword", "var")
