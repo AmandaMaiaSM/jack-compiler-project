@@ -209,3 +209,12 @@ class Parser:
             while self.match("symbol", ","):
                 self.consume("symbol", ",")
                 self.parse_expression()
+
+    def parse_while(self):
+        self.consume("keyword", "while")
+        self.consume("symbol", "(")
+        self.parse_expression()
+        self.consume("symbol", ")")
+        self.consume("symbol", "{")
+        self.parse_statements()
+        self.consume("symbol", "}")
