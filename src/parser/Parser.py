@@ -65,3 +65,23 @@ class Parser:
             self.consume("symbol", ",")
             self.consume("identifier")
         self.consume("symbol", ";")
+
+    # Regra de declaração de metodos, funções e construtores
+
+    def parse_subroutine_decl(self):
+        self.consume("keyword", ["constructor", "function", "method"])
+        self.consume("keyword", ["void", "int", "char", "boolean"] + list(self.classes))
+        self.consume("identifier")
+        self.consume("symbol", "(")
+        self.parse_parameter_list()
+        self.consume("symbol", ")")
+        self.parse_subroutine_body()
+
+    def parse_parameter_list(self):
+        if self.match("keyword", ["int", "char", "boolean"] + list(self.classes)):
+            self.consume("keyword", ["int", "char", "boolean"] + list(self.classes))
+            self.consume("identifier")
+            while self.match("symbol", ","):
+                self.consume("symbol", ",")
+                self.consume("keyword", ["int", "char", "boolean"] + list(self.classes))
+                self.consume("identifier")
