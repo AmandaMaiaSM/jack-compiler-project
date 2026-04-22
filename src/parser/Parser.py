@@ -43,6 +43,25 @@ class Parser:
             return False
         if token_type and token_atual.type != token_type:
             return False
-        if token_value and token_atual.value != token_value:
-            return False
+        if token_value is None:
+            if isinstance(token_value, (list, tuple, set)):
+                if token_atual.value not in token_value:
+                    return False
+                else: 
+                    if token_atual.value != token_value:
+                        return False
         return True
+
+
+    ## Métodos da Gramática
+
+    ### Regra de variável de classe
+
+    def parse_class_var_decl(self):
+        self.consume("keyword", ["static", "field"])
+        self.consume("keyword", ["int", "char", "boolean"] + list(self.classes))
+        self.consume("identifier")
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            self.consume("identifier")
+        self.consume("symbol", ";")
