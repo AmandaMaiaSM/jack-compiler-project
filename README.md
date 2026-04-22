@@ -1,8 +1,12 @@
 # jack-compiler-project
-### Jack Compiler
+### Jack Compiler (Nand2Tetris)
 
 ## Descricao
-Este projeto implementa um compilador para a linguagem Jack (Nand2Tetris), com foco inicial na etapa de analise lexica. O tokenizer le arquivos `.jack`, remove comentarios, valida delimitadores e gera tokens que sao exportados em XML.
+Este projeto implementa as etapas iniciais de um compilador para a linguagem Jack:
+1. analise lexica (tokenizer/scanner)
+2. analise sintatica (parser)
+
+O programa le arquivos `.jack`, gera os tokens em XML e tambem gera a arvore sintatica em XML.
 
 ## Integrantes
 - Amanda Maia Soares Silva
@@ -11,55 +15,54 @@ Este projeto implementa um compilador para a linguagem Jack (Nand2Tetris), com f
 ## Linguagem utilizada
 Python
 
-## Etapas do projeto
-1. Analisador Lexico (Tokenizer) - etapa atual
-2. Analisador Sintatico (Parser)
-3. Geracao de Codigo (VM)
+## Status das etapas
+1. Analisador Lexico (Tokenizer): concluido
+2. Analisador Sintatico (Parser + Grammar): concluido
+3. Geracao de Codigo VM: pendente
 
 ## Como rodar
-1. Escolha o arquivo de entrada em `main.py` (ex.: `tests\inputs\Main.jack`).
+1. Defina o arquivo de entrada em `main.py` (exemplo: `input/Main.jack`).
 2. Execute:
 
 ```bash
 python main.py
 ```
 
-O XML de tokens e salvo em `output/` com o sufixo `T.xml`.
+## Saidas geradas
+Para cada arquivo `.jack` processado:
+- `output/<Nome>T.xml`: lista de tokens
+- `output/<Nome>P.xml`: arvore sintatica (parse tree)
 
-## Arquitetura (fluxo de execucao)
-1. `main.py` instancia o `Scanner` e aponta o arquivo `.jack` de entrada.
-2. `Scanner.tokenizar()` le o arquivo, pede ao `Tokenizer` para extrair tokens brutos, remove comentarios e valida blocos.
-3. `Tokenizer.classificar_tokens()` transforma tokens brutos em instancias de `Token` com tipo, valor e linha.
-4. `WriterXML` converte os tokens para XML e grava o arquivo de saida.
+Exemplo para `input/Main.jack`:
+- `output/MainT.xml`
+- `output/MainP.xml`
 
-## Estrutura de pastas
-```
+## Fluxo de execucao
+1. `main.py` cria o `Scanner`, tokeniza o arquivo e coleta os tokens.
+2. `Parser` recebe os tokens.
+3. `Grammar` aplica as regras sintaticas da linguagem Jack.
+4. `WriterXML` escreve os XMLs de tokens (`T.xml`) e parser (`P.xml`).
+
+## Estrutura de pastas (resumo)
+```text
 jack-compiler-project/
-	main.py
-	README.md
-	output/                 # saidas geradas (XML)
-	src/
-		scanner/
-			Scanner.py          # orquestra a etapa lexica
-			Tokenizer.py        # extrai, filtra e classifica tokens
-			Token.py            # modelo de token (tipo, valor, linha)
-			WriterXML.py        # gera o XML de tokens
-			utils.py            # utilitarios de IO (ex.: leitura de arquivo)
-	tests/
-		inputs/               # entradas Jack de exemplo
-		expected/             # saidas XML esperadas
+  main.py
+  README.md
+  input/                  # arquivos .jack de entrada
+  output/                 # XMLs gerados (T.xml e P.xml)
+  src/
+    scanner/
+      Scanner.py          # orquestracao da etapa lexica
+      Tokenizer.py        # extracao e classificacao de tokens
+      Token.py            # modelo de token (tipo, valor, linha)
+      utils.py            # leitura de arquivo
+    parser/
+      Parser.py           # estado do parser + utilitarios de tokens/XML
+      Grammar.py          # regras gramaticais (parse_*)
+    utils/
+      WriterXML.py        # escrita dos arquivos XML
 ```
-
-## Descricao dos arquivos
-- `main.py`: ponto de entrada que executa o tokenizer e imprime o XML.
-- `src/scanner/Scanner.py`: orquestra leitura, tokenizacao, validacao e escrita do XML.
-- `src/scanner/Tokenizer.py`: implementa a analise lexica (tokenizacao, remocao de comentarios e validacao de blocos).
-- `src/scanner/Token.py`: classe `Token` para representar tipo, valor e linha.
-- `src/scanner/WriterXML.py`: converte tokens em XML e grava em arquivo.
-- `src/scanner/utils.py`: utilitarios de leitura de arquivo.
-- `tests/inputs/`: programas Jack de entrada para teste.
-- `tests/expected/`: saidas XML esperadas para comparacao.
-- `output/`: saidas geradas pelo tokenizer.
 
 ## Observacoes
-O projeto nao usa ferramentas automaticas como Lex, Flex ou Yacc, priorizando a implementacao manual dos conceitos de compiladores.
+- A implementacao e manual, sem uso de Lex/Flex/Yacc.
+- O parser atual foi refatorado para separar regras gramaticais em `Grammar.py` e manter o `Parser.py` como coordenador da analise.
