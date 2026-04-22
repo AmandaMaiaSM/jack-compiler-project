@@ -95,3 +95,19 @@ class Parser:
                 self.consume("symbol", ",")
                 self.consume("keyword", ["int", "char", "boolean"] + list(self.classes))
                 self.consume("identifier")
+
+    def parse_subroutine_body(self):
+        self.consume("symbol", "{")
+        while self.match("keyword", "var"):
+            self.parse_var_decl()
+        # implementar parse_statements()
+        self.consume("symbol", "}")
+
+    def parse_var_decl(self):
+        self.consume("keyword", "var")
+        self.consume("keyword", ["int", "char", "boolean"] + list(self.classes))
+        self.consume("identifier")
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            self.consume("identifier")
+        self.consume("symbol", ";")
