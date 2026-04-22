@@ -12,7 +12,7 @@ class Scanner:
         self.writer_xml = WriterXML()
         self.tokens_classificados = []
 
-    def tokenizar(self, caminho_saida=None):
+    def tokenizar(self):
         codigo = read_file(self.arquivo_entrada)
 
         tokens = self.tokenizer.extrair_tokens_brutos(codigo)
@@ -25,14 +25,7 @@ class Scanner:
             tokens_sem_comentarios
         )
 
-        if caminho_saida is None:
-            caminho_saida = self._gerar_caminho_saida()
-
-        xml_texto = self.writer_xml.escrever_tokens(
-            self.tokens_classificados, caminho_saida
-        )
-
-        return xml_texto
+        return self.tokens_classificados
 
     def _gerar_caminho_saida(self):
         nome_base = os.path.splitext(os.path.basename(self.arquivo_entrada))[0]

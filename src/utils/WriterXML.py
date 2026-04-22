@@ -36,3 +36,10 @@ class WriterXML:
 		with open(caminho_saida, "w", encoding="utf-8") as arquivo:
 			arquivo.write(xml_texto + "\n")
 		return xml_texto
+	
+	def escrever_parser(self, xml_texto, caminho_saida):
+		pasta_saida = os.path.dirname(caminho_saida)
+		if pasta_saida:
+			os.makedirs(pasta_saida, exist_ok=True)
+		with open(caminho_saida, "w", encoding="utf-8") as arquivo:
+			arquivo.write(xml_texto + "\n")
