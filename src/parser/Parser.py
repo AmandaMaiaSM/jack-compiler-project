@@ -116,9 +116,7 @@ class Parser:
                 # self.parse_while()
                 raise NotImplementedError("parse_while ainda nao implementado")
             if self.match("keyword", "do"):
-                # implementar parse_do()
-                # self.parse_do()
-                raise NotImplementedError("parse_do ainda nao implementado")
+                self.parse_do()
             if self.match("keyword", "return"):
                 self.parse_return()
 
@@ -147,6 +145,11 @@ class Parser:
         self.consume("keyword", "return")
         if not self.match("symbol", ";"):
             self.parse_expression()
+        self.consume("symbol", ";")
+
+    def parse_do(self):
+        self.consume("keyword", "do")
+        self.parse_subroutine_call()
         self.consume("symbol", ";")
 
     def parse_expression(self):
@@ -183,11 +186,26 @@ class Parser:
                 self.consume("symbol", "]")
                 return
             if next_token and next_token.type == "symbol" and next_token.value in ("(", "."):
-                # TODO: implementar parse_subroutine_call()
-                # self.parse_subroutine_call()
-                raise NotImplementedError("parse_subroutine_call ainda nao implementado")
+                self.parse_subroutine_call()
+                return
             self.consume("identifier")
             return
         token_atual = self.peek()
         linha = token_atual.line if token_atual else "EOF"
         raise ValueError(f"Termo inesperado na linha {linha}")
+
+    def parse_subroutine_call(self):
+        self.consume("identifier")
+        if self.match("symbol", "."):
+            self.consume("symbol", ".")
+            self.consume("identifier")
+        self.consume("symbol", "(")
+        self.parse_expression_list()
+        self.consume("symbol", ")")
+
+    def parse_expression_list(self):
+        if not self.match("symbol", ")"):
+            self.parse_expression()
+            while self.match("symbol", ","):
+                self.consume("symbol", ",")
+                self.parse_expression()
