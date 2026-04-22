@@ -14,7 +14,7 @@ class Parser:
         return list(self.classes)
 
     def parse(self):
-        pass
+        return self.parse_class()
 
     # Métodos de Manipulação de Tokens
 
@@ -43,17 +43,27 @@ class Parser:
             return False
         if token_type and token_atual.type != token_type:
             return False
-        if token_value is None:
+        if token_value is not None:
             if isinstance(token_value, (list, tuple, set)):
                 if token_atual.value not in token_value:
                     return False
-                else: 
-                    if token_atual.value != token_value:
-                        return False
+            else:
+                if token_atual.value != token_value:
+                    return False
         return True
 
 
     ## Métodos da Gramática
+
+    def parse_class(self):
+        self.consume("keyword", "class")
+        self.consume("identifier")
+        self.consume("symbol", "{")
+        while self.match("keyword", ["static", "field"]):
+            self.parse_class_var_decl()
+        while self.match("keyword", ["constructor", "function", "method"]):
+            self.parse_subroutine_decl()
+        self.consume("symbol", "}")
 
     ### Regra de variável de classe
 
