@@ -1,7 +1,7 @@
 import os
 from src.scanner.utils import read_file
 from src.scanner.Tokenizer import Tokenizer
-from src.scanner.WriterXML import WriterXML
+from src.utils.WriterXML import WriterXML
 
 
 class Scanner:

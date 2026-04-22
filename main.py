@@ -1,6 +1,6 @@
 from src.scanner.Scanner import Scanner
 
-entrada = r"tests\inputs\Main.jack"
+entrada = "input/Main.jack"
 
 scanner = Scanner(entrada)
 
