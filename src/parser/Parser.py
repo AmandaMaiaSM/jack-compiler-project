@@ -108,13 +108,9 @@ class Parser:
             if self.match("keyword", "let"):
                 self.parse_let()
             if self.match("keyword", "if"):
-                # implementar parse_if()
-                # self.parse_if()
-                raise NotImplementedError("parse_if ainda nao implementado")
+                self.parse_if()
             if self.match("keyword", "while"):
-                # implementar parse_while()
-                # self.parse_while()
-                raise NotImplementedError("parse_while ainda nao implementado")
+                self.parse_while()
             if self.match("keyword", "do"):
                 self.parse_do()
             if self.match("keyword", "return"):
