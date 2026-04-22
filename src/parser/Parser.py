@@ -218,3 +218,17 @@ class Parser:
         self.consume("symbol", "{")
         self.parse_statements()
         self.consume("symbol", "}")
+
+    def parse_if(self):
+        self.consume("keyword", "if")
+        self.consume("symbol", "(")
+        self.parse_expression()
+        self.consume("symbol", ")")
+        self.consume("symbol", "{")
+        self.parse_statements()
+        self.consume("symbol", "}")
+        if self.match("keyword", "else"):
+            self.consume("keyword", "else")
+            self.consume("symbol", "{")
+            self.parse_statements()
+            self.consume("symbol", "}")
