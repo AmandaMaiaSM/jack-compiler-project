@@ -7,7 +7,11 @@ entrada = "input/Main.jack"
 scanner = Scanner(entrada)
 scanner.tokenizar()
 tokens = scanner.get_tokens()
-tokens_xml = WriterXML().tokens_para_xml(tokens)
+
+WriterXML().escrever_tokens(
+    tokens, 
+    f"output/{entrada.split('/')[-1].replace('.jack', 'T.xml')}"
+)
 
 parser = Parser(tokens)
 
@@ -15,5 +19,7 @@ xml_output = parser.parse()
 
 print(xml_output)
 
-WriterXML().escrever_tokens(tokens, f"output/{entrada.split('/')[-1].replace('.jack', 'T.xml')}")
-WriterXML().escrever_parser(xml_output, f"output/{entrada.split('/')[-1].replace('.jack', 'P.xml')}")
+WriterXML().escrever_parser(
+    xml_output, 
+    f"output/{entrada.split('/')[-1].replace('.jack', 'P.xml')}"
+)

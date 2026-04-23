@@ -6,6 +6,7 @@ class Grammar:
     # Grammar helpers
     # =========================
 
+    # type → 'int' | 'char' | 'boolean' | className
     def parse_type(self):
         if self.parser.match("keyword", ["int", "char", "boolean"]):
             self.parser.eat("keyword", ["int", "char", "boolean"])
@@ -17,6 +18,7 @@ class Grammar:
             valor = token_atual.value if token_atual else "EOF"
             raise ValueError(f"Tipo invalido na linha {linha}: {valor}")
 
+    # returnType → 'void' | type
     def parse_return_type(self):
         if self.parser.match("keyword", "void"):
             self.parser.eat("keyword", "void")
@@ -27,6 +29,7 @@ class Grammar:
     # Grammar rules
     # =========================
 
+    # class → 'class' className '{' classVarDec* subroutineDec* '}'
     def parse_class(self):
         self.parser.open_tag("class")
 
@@ -44,6 +47,7 @@ class Grammar:
 
         self.parser.close_tag("class")
 
+    # classVarDec → ('static' | 'field') type varName (',' varName)* ';'
     def parse_class_var_decl(self):
         self.parser.open_tag("classVarDec")
 
@@ -59,6 +63,8 @@ class Grammar:
 
         self.parser.close_tag("classVarDec")
 
+    # subroutineDec → ('constructor' | 'function' | 'method') returnType subroutineName
+    # '(' parameterList ')' subroutineBody
     def parse_subroutine_decl(self):
         self.parser.open_tag("subroutineDec")
 
@@ -72,6 +78,7 @@ class Grammar:
 
         self.parser.close_tag("subroutineDec")
 
+    # parameterList → ((type varName) (',' type varName)*)?
     def parse_parameter_list(self):
         self.parser.open_tag("parameterList")
 
@@ -88,6 +95,7 @@ class Grammar:
 
         self.parser.close_tag("parameterList")
 
+    # subroutineBody → '{' varDec* statements '}'
     def parse_subroutine_body(self):
         self.parser.open_tag("subroutineBody")
 
@@ -101,6 +109,7 @@ class Grammar:
 
         self.parser.close_tag("subroutineBody")
 
+    # varDec → 'var' type varName (',' varName)* ';'
     def parse_var_decl(self):
         self.parser.open_tag("varDec")
 
@@ -116,6 +125,7 @@ class Grammar:
 
         self.parser.close_tag("varDec")
 
+    # statements → statement*
     def parse_statements(self):
         self.parser.open_tag("statements")
 
@@ -133,6 +143,7 @@ class Grammar:
 
         self.parser.close_tag("statements")
 
+    # letStatement → 'let' varName ('[' expression ']')? '=' expression ';'
     def parse_let(self):
         self.parser.open_tag("letStatement")
 
@@ -150,6 +161,8 @@ class Grammar:
 
         self.parser.close_tag("letStatement")
 
+    # ifStatement → 'if' '(' expression ')' '{' statements '}'
+    # ('else' '{' statements '}')?
     def parse_if(self):
         self.parser.open_tag("ifStatement")
 
@@ -169,6 +182,7 @@ class Grammar:
 
         self.parser.close_tag("ifStatement")
 
+    # whileStatement → 'while' '(' expression ')' '{' statements '}'
     def parse_while(self):
         self.parser.open_tag("whileStatement")
 
@@ -182,6 +196,7 @@ class Grammar:
 
         self.parser.close_tag("whileStatement")
 
+    # doStatement → 'do' subroutineCall ';'
     def parse_do(self):
         self.parser.open_tag("doStatement")
 
@@ -191,6 +206,7 @@ class Grammar:
 
         self.parser.close_tag("doStatement")
 
+    # returnStatement → 'return' expression? ';'
     def parse_return(self):
         self.parser.open_tag("returnStatement")
 
@@ -203,6 +219,7 @@ class Grammar:
 
         self.parser.close_tag("returnStatement")
 
+    # expression → term (op term)*
     def parse_expression(self):
         self.parser.open_tag("expression")
 
@@ -214,6 +231,9 @@ class Grammar:
 
         self.parser.close_tag("expression")
 
+    # term → integerConstant | stringConstant | keywordConstant |
+    # '(' expression ')' | unaryOp term | varName | varName '[' expression ']' |
+    # subroutineCall
     def parse_term(self):
         self.parser.open_tag("term")
 
@@ -252,7 +272,7 @@ class Grammar:
                 else None
             )
 
-            if next_token and next_token.type == "symbol" and next_token.value == "[":
+            if next_token and next_token.value == "[":
                 self.parser.eat("identifier")
                 self.parser.eat("symbol", "[")
                 self.parse_expression()
@@ -260,7 +280,7 @@ class Grammar:
                 self.parser.close_tag("term")
                 return
 
-            if next_token and next_token.type == "symbol" and next_token.value in ("(", "."):
+            if next_token and next_token.value in ("(", "."):
                 self.parse_subroutine_call()
                 self.parser.close_tag("term")
                 return
@@ -274,6 +294,8 @@ class Grammar:
         valor = token_atual.value if token_atual else "EOF"
         raise ValueError(f"Termo inesperado na linha {linha}: {valor}")
 
+    # subroutineCall → subroutineName '(' expressionList ')'
+    # | (className | varName) '.' subroutineName '(' expressionList ')'
     def parse_subroutine_call(self):
         self.parser.eat("identifier")
 
@@ -285,6 +307,7 @@ class Grammar:
         self.parse_expression_list()
         self.parser.eat("symbol", ")")
 
+    # expressionList → (expression (',' expression)*)?
     def parse_expression_list(self):
         self.parser.open_tag("expressionList")
 
