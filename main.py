@@ -1,36 +1,33 @@
-from src.scanner.Scanner import Scanner
+﻿import os
+
 from src.parser.Parser import Parser
+from src.scanner.Scanner import Scanner
 from src.utils.WriterXML import WriterXML
 
 # Configuração de entrada e saída
 entrada = "input/Main.jack"
 
-# Etapa de Análise Léxica: Tokenização
+# Etapa de análise léxica: tokenização
 scanner = Scanner(entrada)
 scanner.tokenizar()
 tokens = scanner.get_tokens()
 
-WriterXML().escrever_tokens(
-    tokens, 
-    f"output/{entrada.split('/')[-1].replace('.jack', 'T.xml')}"
-)
+nome_base = os.path.splitext(os.path.basename(entrada))[0]
 
-# Etapa de Análise Sintática: Parsing
+WriterXML().escrever_tokens(tokens, os.path.join("output", f"{nome_base}T.xml"))
+
+# Etapa de análise sintática: parsing
 parser = Parser(tokens)
 xml_output = parser.parse()
-arquivo_saida = f"output/{entrada.split('/')[-1].replace('.jack', 'P.xml')}"
 
-WriterXML().escrever_parser(
-    xml_output, 
-    arquivo_saida
-)
+arquivo_saida = os.path.join("output", f"{nome_base}P.xml")
+WriterXML().escrever_parser(xml_output, arquivo_saida)
 
 # Comparação com arquivo esperado
-arquivo_esperado = f"expected/{entrada.split('/')[-1].replace('.jack', '.xml')}"
+arquivo_esperado = os.path.join("expected", f"{nome_base}.xml")
+resultado = WriterXML.comparar_arquivos(arquivo_saida, arquivo_esperado)
 
-resultado = WriterXML.comparar_arquivos(
-    arquivo_saida, 
-    arquivo_esperado
-) 
-
-print(f"Comparação com arquivo esperado: {'Sucesso, arquivos iguais' if resultado else 'Falha, arquivos diferentes'}")
+print(
+	f"Comparação com arquivo esperado: "
+	f"{'Sucesso, arquivos iguais' if resultado else 'Falha, arquivos diferentes'}"
+)

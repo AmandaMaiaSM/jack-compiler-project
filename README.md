@@ -1,12 +1,12 @@
-# jack-compiler-project
+﻿# jack-compiler-project
 ### Jack Compiler (Nand2Tetris)
 
-## Descricao
+## Descrição
 Este projeto implementa as etapas iniciais de um compilador para a linguagem Jack:
-1. analise lexica (tokenizer/scanner)
-2. analise sintatica (parser)
+1. Análise léxica (tokenizer/scanner)
+2. Análise sintática (parser)
 
-O programa le arquivos `.jack`, gera os tokens em XML e tambem gera a arvore sintatica em XML.
+O programa lê arquivos `.jack`, gera os tokens em XML e também gera a árvore sintática em XML.
 
 ## Integrantes
 - Amanda Maia Soares Silva
@@ -16,9 +16,9 @@ O programa le arquivos `.jack`, gera os tokens em XML e tambem gera a arvore sin
 Python
 
 ## Status das etapas
-1. Analisador Lexico (Tokenizer): concluido
-2. Analisador Sintatico (Parser + Grammar): concluido
-3. Geracao de Codigo VM: pendente
+1. Analisador Léxico (Tokenizer): concluído
+2. Analisador Sintático (Parser + Grammar): concluído
+3. Geração de Código VM: pendente
 
 ## Como rodar
 1. Defina o arquivo de entrada em `main.py` (exemplo: `input/Main.jack`).
@@ -28,20 +28,21 @@ Python
 python main.py
 ```
 
-## Saidas geradas
+## Saídas geradas
 Para cada arquivo `.jack` processado:
 - `output/<Nome>T.xml`: lista de tokens
-- `output/<Nome>P.xml`: arvore sintatica (parse tree)
+- `output/<Nome>P.xml`: árvore sintática (parse tree)
 
 Exemplo para `input/Main.jack`:
 - `output/MainT.xml`
 - `output/MainP.xml`
 
-## Fluxo de execucao
+## Fluxo de execução
 1. `main.py` cria o `Scanner`, tokeniza o arquivo e coleta os tokens.
-2. `Parser` recebe os tokens.
-3. `Grammar` aplica as regras sintaticas da linguagem Jack.
-4. `WriterXML` escreve os XMLs de tokens (`T.xml`) e parser (`P.xml`).
+2. `WriterXML` escreve os tokens em `output/<Nome>T.xml`.
+3. `Parser` recebe os tokens e gera o XML da árvore sintática.
+4. `WriterXML` escreve o parser em `output/<Nome>P.xml`.
+5. O método `WriterXML.comparar_arquivos(arquivo1, arquivo2)` pode ser usado para comparar a saída gerada com o arquivo de referência em `expected/<Nome>.xml`.
 
 ## Estrutura de pastas (resumo)
 ```text
@@ -50,19 +51,31 @@ jack-compiler-project/
   README.md
   input/                  # arquivos .jack de entrada
   output/                 # XMLs gerados (T.xml e P.xml)
+  expected/               # XMLs de referência (parser) para comparação
   src/
     scanner/
-      Scanner.py          # orquestracao da etapa lexica
-      Tokenizer.py        # extracao e classificacao de tokens
+      Scanner.py          # orquestração da etapa léxica
+      Tokenizer.py        # extração e classificação de tokens
       Token.py            # modelo de token (tipo, valor, linha)
       utils.py            # leitura de arquivo
     parser/
-      Parser.py           # estado do parser + utilitarios de tokens/XML
+      Parser.py           # estado do parser + utilitários de tokens/XML
       Grammar.py          # regras gramaticais (parse_*)
     utils/
-      WriterXML.py        # escrita dos arquivos XML
+      WriterXML.py        # escrita/comparação dos arquivos XML
 ```
 
-## Observacoes
-- A implementacao e manual, sem uso de Lex/Flex/Yacc.
-- O parser atual foi refatorado para separar regras gramaticais em `Grammar.py` e manter o `Parser.py` como coordenador da analise.
+## Observações
+- A implementação é manual, sem uso de Lex/Flex/Yacc.
+- O parser atual foi refatorado para separar regras gramaticais em `Grammar.py` e manter o `Parser.py` como coordenador da análise.
+
+## Comparação de arquivos de saída
+Para comparar a saída gerada (`output/<Nome>P.xml`) com um arquivo de referência (`expected/<Nome>.xml`), utilize:
+
+```python
+from src.utils.WriterXML import WriterXML
+
+WriterXML.comparar_arquivos("output/MainP.xml", "expected/Main.xml")
+```
+
+Se os arquivos forem iguais, o método retorna `True` e imprime `Os arquivos são iguais.`. Caso contrário, retorna `False` e imprime `Os arquivos são diferentes.`.

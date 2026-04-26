@@ -1,4 +1,4 @@
-import os
+﻿import os
 from xml.sax.saxutils import escape
 
 
@@ -46,12 +46,12 @@ class WriterXML:
 
 	@staticmethod
 	def comparar_arquivos(arquivo1, arquivo2):
-		with open(arquivo1, 'r', encoding='utf-8') as f1, open(arquivo2, 'r', encoding='utf-8') as f2:
+		with open(arquivo1, "r", encoding="utf-8") as f1, open(arquivo2, "r", encoding="utf-8") as f2:
 			conteudo1 = f1.read()
 			conteudo2 = f2.read()
 			if conteudo1 == conteudo2:
 				print("Os arquivos são iguais.")
 				return True
-			else:
-				print("Os arquivos são diferentes.")
-				return False
+
+			print("Os arquivos são diferentes.")
+			return False
