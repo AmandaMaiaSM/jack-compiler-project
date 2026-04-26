@@ -43,3 +43,15 @@ class WriterXML:
 			os.makedirs(pasta_saida, exist_ok=True)
 		with open(caminho_saida, "w", encoding="utf-8") as arquivo:
 			arquivo.write(xml_texto + "\n")
+
+	@staticmethod
+	def comparar_arquivos(arquivo1, arquivo2):
+		with open(arquivo1, 'r', encoding='utf-8') as f1, open(arquivo2, 'r', encoding='utf-8') as f2:
+			conteudo1 = f1.read()
+			conteudo2 = f2.read()
+			if conteudo1 == conteudo2:
+				print("Os arquivos são iguais.")
+				return True
+			else:
+				print("Os arquivos são diferentes.")
+				return False
