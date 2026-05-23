@@ -1,6 +1,5 @@
 import os
 
-
 class VMWriter:
     def __init__(self, output_path):
         os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
