@@ -35,3 +35,24 @@ class CodeGenerator:
 
     def _pop_var(self, name):
         self._vm.write_pop(self._sym.segment_of(name), self._sym.index_of(name))
+
+    def _compile_class(self):
+        self._consume('keyword', 'class')
+        self._class_name = self._consume('identifier').value
+        self._consume('symbol', '{')
+        while self._match('keyword', ('static', 'field')):
+            self._compile_class_var_decl()
+        while self._match('keyword', ('constructor', 'function', 'method')):
+            self._compile_subroutine()
+        self._consume('symbol', '}')
+
+    def _compile_class_var_decl(self):
+        kind = self._consume('keyword').value          # static | field
+        type_ = self._consume_type()
+        name = self._consume('identifier').value
+        self._sym.define(name, type_, kind)
+        while self._match('symbol', ','):
+            self._consume('symbol', ',')
+            name = self._consume('identifier').value
+            self._sym.define(name, type_, kind)
+        self._consume('symbol', ';')
