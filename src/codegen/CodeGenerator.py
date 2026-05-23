@@ -16,3 +16,22 @@ class CodeGenerator:
         self._sub_type = ''
         self._if_counter = 0
         self._while_counter = 0
+
+    def compile(self):
+        self._compile_class()
+        self._vm.close()
+
+    def _consume(self, token_type=None, token_value=None):
+        return self._parser.consume(token_type, token_value)
+
+    def _peek(self):
+        return self._parser.peek()
+
+    def _match(self, token_type=None, token_value=None):
+        return self._parser.match(token_type, token_value)
+
+    def _push_var(self, name):
+        self._vm.write_push(self._sym.segment_of(name), self._sym.index_of(name))
+
+    def _pop_var(self, name):
+        self._vm.write_pop(self._sym.segment_of(name), self._sym.index_of(name))
