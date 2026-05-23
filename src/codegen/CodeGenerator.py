@@ -197,3 +197,118 @@ class CodeGenerator:
             self._compile_expression()
         self._consume('symbol', ';')
         self._vm.write_return()
+
+    def _compile_expression(self):
+        self._compile_term()
+        while self._match('symbol', tuple(OP_MAP) + ('*', '/')):
+            op = self._consume('symbol').value
+            self._compile_term()
+            if op == '*':
+                self._vm.write_call('Math.multiply', 2)
+            elif op == '/':
+                self._vm.write_call('Math.divide', 2)
+            else:
+                self._vm.write_arithmetic(OP_MAP[op])
+
+    def _compile_term(self):
+        tok = self._peek()
+
+        if tok.type == 'integerConstant':
+            self._consume()
+            self._vm.write_push('constant', int(tok.value))
+
+        elif tok.type == 'stringConstant':
+            self._consume()
+            s = tok.value
+            self._vm.write_push('constant', len(s))
+            self._vm.write_call('String.new', 1)
+            for ch in s:
+                self._vm.write_push('constant', ord(ch))
+                self._vm.write_call('String.appendChar', 2)
+
+        elif tok.type == 'keyword' and tok.value in ('true', 'false', 'null', 'this'):
+            self._consume()
+            if tok.value == 'true':
+                self._vm.write_push('constant', 0)
+                self._vm.write_arithmetic('not')
+            elif tok.value in ('false', 'null'):
+                self._vm.write_push('constant', 0)
+            else:  # this
+                self._vm.write_push('pointer', 0)
+
+        elif tok.type == 'symbol' and tok.value == '(':
+            self._consume('symbol', '(')
+            self._compile_expression()
+            self._consume('symbol', ')')
+
+        elif tok.type == 'symbol' and tok.value in ('-', '~'):
+            op = self._consume('symbol').value
+            self._compile_term()
+            self._vm.write_arithmetic('neg' if op == '-' else 'not')
+
+        elif tok.type == 'identifier':
+            name = self._consume('identifier').value
+            next_tok = self._peek()
+
+            if next_tok and next_tok.value == '[':       # array access
+                self._consume('symbol', '[')
+                self._push_var(name)
+                self._compile_expression()
+                self._vm.write_arithmetic('add')
+                self._consume('symbol', ']')
+                self._vm.write_pop('pointer', 1)
+                self._vm.write_push('that', 0)
+
+            elif next_tok and next_tok.value in ('(', '.'):  # subroutine call
+                self._compile_subroutine_call(name)
+
+            else:                                         # simple variable
+                self._push_var(name)
+
+    def _compile_subroutine_call(self, name):
+        next_tok = self._peek()
+
+        if next_tok and next_tok.value == '.':
+            self._consume('symbol', '.')
+            method_name = self._consume('identifier').value
+            if self._sym.kind_of(name) != 'NONE':
+                # name is an object variable
+                self._push_var(name)
+                class_name = self._sym.type_of(name)
+                self._consume('symbol', '(')
+                n_args = self._compile_expression_list()
+                self._consume('symbol', ')')
+                self._vm.write_call(f'{class_name}.{method_name}', n_args + 1)
+            else:
+                # name is a class name — static function call
+                self._consume('symbol', '(')
+                n_args = self._compile_expression_list()
+                self._consume('symbol', ')')
+                self._vm.write_call(f'{name}.{method_name}', n_args)
+
+        else:
+            # Unqualified call — implicit this (method on current class)
+            self._consume('symbol', '(')
+            self._vm.write_push('pointer', 0)
+            n_args = self._compile_expression_list()
+            self._consume('symbol', ')')
+            self._vm.write_call(f'{self._class_name}.{name}', n_args + 1)
+
+    def _compile_expression_list(self):
+        n = 0
+        if not self._match('symbol', ')'):
+            self._compile_expression()
+            n += 1
+            while self._match('symbol', ','):
+                self._consume('symbol', ',')
+                self._compile_expression()
+                n += 1
+        return n
+
+    # --------------------------------------------------------------- utilities
+
+    def _consume_type(self):
+        tok = self._peek()
+        if tok.type == 'keyword' and tok.value in ('int', 'char', 'boolean'):
+            return self._consume('keyword').value
+        return self._consume('identifier').value   # class name
