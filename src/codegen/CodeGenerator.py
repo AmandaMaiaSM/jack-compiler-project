@@ -111,3 +111,89 @@ class CodeGenerator:
             name = self._consume('identifier').value
             self._sym.define(name, type_, 'local')
         self._consume('symbol', ';')
+
+    def _compile_statements(self):
+        dispatch = {
+            'let': self._compile_let,
+            'if': self._compile_if,
+            'while': self._compile_while,
+            'do': self._compile_do,
+            'return': self._compile_return,
+        }
+        while self._match('keyword', tuple(dispatch)):
+            kw = self._peek().value
+            dispatch[kw]()
+
+    def _compile_let(self):
+        self._consume('keyword', 'let')
+        var_name = self._consume('identifier').value
+        is_array = self._match('symbol', '[')
+        if is_array:
+            self._consume('symbol', '[')
+            self._push_var(var_name)        # push array base
+            self._compile_expression()
+            self._vm.write_arithmetic('add')  # base + index
+            self._consume('symbol', ']')
+        self._consume('symbol', '=')
+        self._compile_expression()
+        self._consume('symbol', ';')
+        if is_array:
+            self._vm.write_pop('temp', 0)     # save RHS value
+            self._vm.write_pop('pointer', 1)  # set THAT to target address
+            self._vm.write_push('temp', 0)    # restore value
+            self._vm.write_pop('that', 0)     # store at arr[i]
+        else:
+            self._pop_var(var_name)
+
+    def _compile_if(self):
+        n = self._if_counter
+        self._if_counter += 1
+        self._consume('keyword', 'if')
+        self._consume('symbol', '(')
+        self._compile_expression()
+        self._consume('symbol', ')')
+        self._vm.write_arithmetic('not')
+        self._vm.write_if_goto(f'IF_FALSE_{n}')
+        self._consume('symbol', '{')
+        self._compile_statements()
+        self._consume('symbol', '}')
+        self._vm.write_goto(f'IF_END_{n}')
+        self._vm.write_label(f'IF_FALSE_{n}')
+        if self._match('keyword', 'else'):
+            self._consume('keyword', 'else')
+            self._consume('symbol', '{')
+            self._compile_statements()
+            self._consume('symbol', '}')
+        self._vm.write_label(f'IF_END_{n}')
+
+    def _compile_while(self):
+        n = self._while_counter
+        self._while_counter += 1
+        self._vm.write_label(f'WHILE_START_{n}')
+        self._consume('keyword', 'while')
+        self._consume('symbol', '(')
+        self._compile_expression()
+        self._consume('symbol', ')')
+        self._vm.write_arithmetic('not')
+        self._vm.write_if_goto(f'WHILE_END_{n}')
+        self._consume('symbol', '{')
+        self._compile_statements()
+        self._consume('symbol', '}')
+        self._vm.write_goto(f'WHILE_START_{n}')
+        self._vm.write_label(f'WHILE_END_{n}')
+
+    def _compile_do(self):
+        self._consume('keyword', 'do')
+        name = self._consume('identifier').value
+        self._compile_subroutine_call(name)
+        self._consume('symbol', ';')
+        self._vm.write_pop('temp', 0)   # discard void return value
+
+    def _compile_return(self):
+        self._consume('keyword', 'return')
+        if self._match('symbol', ';'):
+            self._vm.write_push('constant', 0)   # void function returns 0
+        else:
+            self._compile_expression()
+        self._consume('symbol', ';')
+        self._vm.write_return()
