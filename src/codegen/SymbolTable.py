@@ -23,3 +23,21 @@ class SymbolTable:
             self._class_table[name] = entry
         else:
             self._sub_table[name] = entry
+
+    def var_count(self, kind):
+        return self._counts[kind]
+
+    def _lookup(self, name):
+        return self._sub_table.get(name) or self._class_table.get(name)
+
+    def kind_of(self, name):
+        entry = self._lookup(name)
+        return entry['kind'] if entry else 'NONE'
+
+    def type_of(self, name):
+        entry = self._lookup(name)
+        return entry['type'] if entry else None
+
+    def index_of(self, name):
+        entry = self._lookup(name)
+        return entry['index'] if entry else None
