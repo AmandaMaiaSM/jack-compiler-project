@@ -41,3 +41,7 @@ class SymbolTable:
     def index_of(self, name):
         entry = self._lookup(name)
         return entry['index'] if entry else None
+    
+    def segment_of(self, name):
+        kind = self.kind_of(name)
+        return self.KIND_TO_SEGMENT.get(kind)
