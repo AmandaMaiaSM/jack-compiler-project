@@ -7,6 +7,7 @@ OP_MAP = {
     '<': 'lt', '>': 'gt', '=': 'eq',
 }
 
+
 class CodeGenerator:
     def __init__(self, tokens, output_path):
         self._parser = Parser(tokens)
@@ -17,9 +18,13 @@ class CodeGenerator:
         self._if_counter = 0
         self._while_counter = 0
 
+    # ------------------------------------------------------------------ public
+
     def compile(self):
         self._compile_class()
         self._vm.close()
+
+    # ----------------------------------------------------------------- helpers
 
     def _consume(self, token_type=None, token_value=None):
         return self._parser.consume(token_type, token_value)
@@ -35,6 +40,8 @@ class CodeGenerator:
 
     def _pop_var(self, name):
         self._vm.write_pop(self._sym.segment_of(name), self._sym.index_of(name))
+
+    # --------------------------------------------------------------- class level
 
     def _compile_class(self):
         self._consume('keyword', 'class')
@@ -57,6 +64,7 @@ class CodeGenerator:
             self._sym.define(name, type_, kind)
         self._consume('symbol', ';')
 
+    # --------------------------------------------------------------- subroutine
 
     def _compile_subroutine(self):
         self._sub_type = self._consume('keyword').value   # constructor|function|method
@@ -111,6 +119,8 @@ class CodeGenerator:
             name = self._consume('identifier').value
             self._sym.define(name, type_, 'local')
         self._consume('symbol', ';')
+
+    # --------------------------------------------------------------- statements
 
     def _compile_statements(self):
         dispatch = {
@@ -197,6 +207,8 @@ class CodeGenerator:
             self._compile_expression()
         self._consume('symbol', ';')
         self._vm.write_return()
+
+    # --------------------------------------------------------------- expressions
 
     def _compile_expression(self):
         self._compile_term()
