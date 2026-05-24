@@ -34,3 +34,5 @@ class VMWriter:
 
     def close(self):
         self._file.close()
+
+
