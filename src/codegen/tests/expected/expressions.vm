@@ -1,0 +1,7 @@
+function Expressions.compute 1
+push argument 0
+push argument 1
+add
+pop local 0
+push local 0
+return

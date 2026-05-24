@@ -1,0 +1,7 @@
+class Expressions {
+    function int compute(int a, int b) {
+        var int result;
+        let result = a + b;
+        return result;
+    }
+}

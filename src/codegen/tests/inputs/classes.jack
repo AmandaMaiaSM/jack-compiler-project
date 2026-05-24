@@ -1,0 +1,12 @@
+class Counter {
+    field int count;
+
+    constructor Counter new() {
+        let count = 0;
+        return this;
+    }
+
+    method int get() {
+        return count;
+    }
+}

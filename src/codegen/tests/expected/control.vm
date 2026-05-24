@@ -1,0 +1,13 @@
+function Control.max 0
+push argument 0
+push argument 1
+gt
+not
+if-goto IF_FALSE_0
+push argument 0
+return
+goto IF_END_0
+label IF_FALSE_0
+push argument 1
+return
+label IF_END_0

@@ -1,0 +1,11 @@
+function Arrays.set 0
+push argument 0
+push constant 0
+add
+push argument 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 0
+return

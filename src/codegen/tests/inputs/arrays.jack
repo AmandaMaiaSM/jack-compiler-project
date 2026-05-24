@@ -1,0 +1,6 @@
+class Arrays {
+    function void set(Array a, int val) {
+        let a[0] = val;
+        return;
+    }
+}
